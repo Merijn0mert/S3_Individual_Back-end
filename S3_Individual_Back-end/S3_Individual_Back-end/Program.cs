@@ -9,6 +9,21 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowVueJS",
+        builder =>
+        {
+            builder.WithOrigins("http://localhost:8080/") // Update with the URL of your Vue.js app
+                .AllowAnyHeader()
+                .AllowAnyMethod();
+        });
+});
+
+app.UseCors("AllowVueJS");
+
+// ...
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -23,3 +38,4 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
