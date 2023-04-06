@@ -23,7 +23,6 @@ builder.Services.AddCors(options =>
 
 app.UseCors("AllowVueJS");
 
-// ...
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {

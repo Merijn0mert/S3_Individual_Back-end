@@ -1,12 +1,21 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using BusinessLogic.Classes;
+using BusinessLogic.Containers;
+using DataAccess.DAL;
 
 namespace S3_Individual_Back_end.Controllers
 {
-    public class ProductController : Controller
+    [ApiController]
+    [Route("\"api/products\"")]
+    public class ProductController : ControllerBase
     {
-        public IActionResult Index()
+        ProductContainer productContainer = new ProductContainer(new ProductDAL());
+
+        [HttpGet]
+        public ActionResult<IEnumerable<Product>> GetAllProducts()
         {
-            return View();
+            var products = productContainer.GetAllProducts();
+            return Ok(products);
         }
     }
 }
