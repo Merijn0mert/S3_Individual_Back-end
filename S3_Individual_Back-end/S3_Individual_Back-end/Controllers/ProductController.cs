@@ -12,9 +12,9 @@ namespace S3_Individual_Back_end.Controllers
         ProductContainer productContainer = new ProductContainer(new ProductDAL());
 
         [HttpGet]
-        public ActionResult<IEnumerable<Product>> GetAllProducts()
+        public ActionResult<List<Product>> GetAllProducts()
         {
-            var products = productContainer.GetAllProducts();
+            List<Product> products = productContainer.GetAllProducts();
             return Ok(products);
         }
     }

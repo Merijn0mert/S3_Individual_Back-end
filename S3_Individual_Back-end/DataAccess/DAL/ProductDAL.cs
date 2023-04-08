@@ -37,7 +37,8 @@ namespace DataAccess.DAL
                                 ProductID = (int)reader["productid"],
                                 ProductName = (string)reader["name"],
                                 Price = (decimal)reader["price"],
-                                Description = (string)reader["description"]
+                                Description = (string)reader["productdescription"],
+                                ProductImage = (byte[])reader["productimage"]
                             };
 
                             products.Add(product);

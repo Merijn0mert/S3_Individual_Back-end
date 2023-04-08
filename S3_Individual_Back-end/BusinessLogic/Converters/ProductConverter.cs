@@ -17,7 +17,8 @@ namespace BusinessLogic.Converters
                 Model.ProductID,
                 Model.ProductName,
                 Model.Price,
-                Model.Description
+                Model.Description,
+                Model.ProductImage
             );
 
             return productdto;
@@ -30,10 +31,12 @@ namespace BusinessLogic.Converters
                 DTO.ProductID,
                 DTO.ProductName,
                 DTO.Price,
-                DTO.Description
+                DTO.Description,
+                DTO.ProductImage
             );
 
             return product;
         }
     }
 }
+
