@@ -57,5 +57,53 @@ namespace DataAccess.DAL
 
             return products;
         }
+
+        public ProductDTO GetProductByID(int id)
+        {
+            ProductDTO productDTO = default;
+
+            try
+            {
+                const string sql = "SELECT * FROM [product] WHERE productid = @ID";
+
+                using (SqlConnection connection = new SqlConnection(_connectionString))
+                {
+                    using (SqlCommand command = new SqlCommand(sql, connection))
+                    {
+                        connection.Open();
+
+                        command.Parameters.AddWithValue("@ID", id);
+
+                        SqlDataReader reader = command.ExecuteReader();
+
+                        while (reader.Read())
+                        {
+                            productDTO = new ProductDTO()
+                            {
+                                ProductID = (int)reader["productid"],
+                                ProductName = (string)reader["name"],
+                                Price = (decimal)reader["price"],
+                                Description = (string)reader["productdescription"],
+                                ProductImage = (byte[])reader["productimage"]
+                            };
+                        }
+                    }
+
+                    return productDTO;
+                }
+            }
+            catch (SqlException ex)
+            {
+                throw new Exception("Invalid SQL query. ", ex);
+            }
+            catch (ArgumentException ex)
+            {
+                throw new Exception("Invalid arguments. ", ex);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Foutmelding. ", ex);
+            }
+        }
     }
 }

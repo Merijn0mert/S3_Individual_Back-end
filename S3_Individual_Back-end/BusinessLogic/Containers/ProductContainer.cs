@@ -31,5 +31,12 @@ namespace BusinessLogic.Containers
 
             return products;
         }
+
+        public Product GetProductByID(int id)
+        {
+            Product products = productContainerDAL.GetProductByID(id).toModel();
+
+            return products;
+        }
     }
 }

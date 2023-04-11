@@ -11,5 +11,6 @@ namespace Interface.IDAL
     public interface IProductContainerDAL
     {
         List<ProductDTO> GetAllProducts();
+        ProductDTO GetProductByID(int id);
     }
 }

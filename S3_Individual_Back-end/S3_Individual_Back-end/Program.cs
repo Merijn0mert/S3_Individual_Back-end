@@ -38,16 +38,16 @@ builder.Services.AddScoped<Interface.IDAL.IProductContainerDAL, DataAccess.DAL.P
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowVueJS",
+    options.AddPolicy("MyAllowedOrigins",
         builder =>
         {
-            builder.WithOrigins("http://localhost:8080/") // Update with the URL of your Vue.js app
+            builder.WithOrigins("http://localhost:8080") // Update with the URL of your Vue.js app
                 .AllowAnyHeader()
                 .AllowAnyMethod();
         });
 });
 var app = builder.Build();
-app.UseCors("AllowVueJS");
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -57,6 +57,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseCors("MyAllowedOrigins");
 
 app.UseAuthorization();
 
