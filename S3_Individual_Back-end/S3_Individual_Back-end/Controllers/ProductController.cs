@@ -19,13 +19,38 @@ namespace S3_Individual_Back_end.Controllers
             return Ok(products);
         }
 
-        [HttpGet("product/{productid}")]
+        [HttpGet("product/{id}")]
         public IActionResult GetAllProductByID(int id)
         {
-            id = 1;
+
             Product product = productContainer.GetProductByID(id);
 
             return Ok(product);
+        }
+
+        [HttpPost("product/create")]
+        public IActionResult AddProduct(Product product, IFormFile postedFile)
+        {
+
+            {
+                if (product == null)
+                {
+                    return BadRequest("Product data is null.");
+                }
+                if (postedFile != null && postedFile.Length > 0)
+                {
+                    using (var ms = new MemoryStream())
+                    {
+                        postedFile.CopyTo(ms);
+                        product.ProductImage = ms.ToArray();
+                        // act on the Base64 data
+                    }
+                }
+
+                productContainer.CreateProduct(product);
+
+                return Ok();
+            }
         }
     }
 }

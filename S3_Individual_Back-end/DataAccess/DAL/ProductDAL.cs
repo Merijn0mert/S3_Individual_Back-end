@@ -105,5 +105,31 @@ namespace DataAccess.DAL
                 throw new Exception("Foutmelding. ", ex);
             }
         }
+        public bool CreateProduct(ProductDTO prodDTO)
+        {
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+                try
+                {
+                    conn.Open();
+                    string query = "INSERT INTO product(name, price, productdescription, productimage)" +
+                                   "VALUES (@productname, @price, @productdescription, @productimage)";
+                    SqlCommand command = new SqlCommand(query, conn);
+
+                    command.Parameters.AddWithValue("@productname", prodDTO.ProductName);
+                    command.Parameters.AddWithValue("@price", prodDTO.Price);
+                    command.Parameters.AddWithValue("@productdescription", (prodDTO.Description == null ? "" : prodDTO.Description));
+                    command.Parameters.AddWithValue("@productimage", prodDTO.ProductImage);
+
+                    command.ExecuteNonQuery();
+
+                    conn.Close();
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                    return false;
+                }
+        }
     }
 }

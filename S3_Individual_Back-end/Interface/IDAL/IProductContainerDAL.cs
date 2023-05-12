@@ -10,6 +10,7 @@ namespace Interface.IDAL
 {
     public interface IProductContainerDAL
     {
+        bool CreateProduct(ProductDTO productDTO);
         List<ProductDTO> GetAllProducts();
         ProductDTO GetProductByID(int id);
     }

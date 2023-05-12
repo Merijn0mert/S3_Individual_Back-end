@@ -38,5 +38,10 @@ namespace BusinessLogic.Containers
 
             return products;
         }
+
+        public bool CreateProduct(Product product)
+        {
+            return productContainerDAL.CreateProduct(product.toDTO());
+        }
     }
 }
