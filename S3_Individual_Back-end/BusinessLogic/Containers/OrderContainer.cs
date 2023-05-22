@@ -1,15 +1,14 @@
-﻿using KaarsenInterface.DTO;
-using KaarsenInterface.IDAL;
-using KaarsenLogic.Class;
-using KaarsenLogic.Converter;
-using System;
-using System.Collections;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Interface.IDAL;
+using Interface.DTO;
+using BusinessLogic.Classes;
+using BusinessLogic.Converters;
 
-namespace KaarsenLogic.Container
+namespace BusinessLogic.Containers
 {
     public class OrderContainer
     {

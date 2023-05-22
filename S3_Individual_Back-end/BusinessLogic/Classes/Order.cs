@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace KaarsenLogic.Class
+namespace BusinessLogic.Classes
 {
     public class Order
     {

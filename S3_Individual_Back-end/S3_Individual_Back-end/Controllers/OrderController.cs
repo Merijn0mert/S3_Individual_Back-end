@@ -1,12 +1,28 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using BusinessLogic.Classes;
+using BusinessLogic.Containers;
+using DataAccess.DAL;
+using Microsoft.AspNetCore.Mvc;
 
 namespace S3_Individual_Back_end.Controllers
 {
-    public class OrderController : Controller
+
+    [Route("api/orders")]
+    [ApiController]
+    public class OrderController : ControllerBase
     {
-        public IActionResult Index()
+        OrderContainer orderContainer = new OrderContainer(new OrderDAL());
+
+        [HttpGet]
+        public ActionResult<List<Product>> GetAllOrders(int id)
         {
-            return View();
+            List<Order> orders = orderContainer.GetAllUserOrder(id);
+            return Ok(orders);
         }
+
+        /*[HttpPost]
+        public ActionResult AddOrder([FromBody]Order order)
+        {
+
+        }*/
     }
 }

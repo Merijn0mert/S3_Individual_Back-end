@@ -1,12 +1,12 @@
-﻿using KaarsenInterface.DTO;
-using KaarsenLogic.Class;
+﻿using BusinessLogic.Classes;
+using Interface.DTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace KaarsenLogic.Converter
+namespace BusinessLogic.Converters
 {
     public static class OrderConverter
     {

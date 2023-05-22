@@ -3,11 +3,13 @@ using BusinessLogic.Classes;
 using BusinessLogic.Containers;
 using DataAccess.DAL;
 
+
 namespace S3_Individual_Back_end.Controllers
 {
     
-    [Route("api/products")]
+    
     [ApiController]
+    [Route("api/products")]
     public class ProductController : ControllerBase
     {
         ProductContainer productContainer = new ProductContainer(new ProductDAL());
@@ -29,28 +31,22 @@ namespace S3_Individual_Back_end.Controllers
         }
 
         [HttpPost("product/create")]
-        public IActionResult AddProduct(Product product, IFormFile postedFile)
+        public async Task<IActionResult> AddProduct([FromBody]Product Product)
         {
-
+            /*if (postedFile.Length > 0)
             {
-                if (product == null)
+                using (var ms = new MemoryStream())
                 {
-                    return BadRequest("Product data is null.");
+                    postedFile.CopyTo(ms);
+                    Product.ProductImage = ms.ToArray();
+                    // act on the Base64 data
                 }
-                if (postedFile != null && postedFile.Length > 0)
-                {
-                    using (var ms = new MemoryStream())
-                    {
-                        postedFile.CopyTo(ms);
-                        product.ProductImage = ms.ToArray();
-                        // act on the Base64 data
-                    }
-                }
+            }*/
 
-                productContainer.CreateProduct(product);
+            Product products = Product;
+            productContainer.CreateProduct(products);
 
-                return Ok();
-            }
+            return Ok();
         }
     }
 }
