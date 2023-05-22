@@ -33,15 +33,6 @@ namespace S3_Individual_Back_end.Controllers
         [HttpPost("product/create")]
         public async Task<IActionResult> AddProduct([FromBody]Product Product)
         {
-            /*if (postedFile.Length > 0)
-            {
-                using (var ms = new MemoryStream())
-                {
-                    postedFile.CopyTo(ms);
-                    Product.ProductImage = ms.ToArray();
-                    // act on the Base64 data
-                }
-            }*/
 
             Product products = Product;
             productContainer.CreateProduct(products);
