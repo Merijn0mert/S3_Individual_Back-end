@@ -12,17 +12,11 @@ namespace S3_Individual_Back_end.Controllers
     {
         OrderContainer orderContainer = new OrderContainer(new OrderDAL());
 
-        [HttpGet]
+       [HttpGet]
         public ActionResult<List<Product>> GetAllOrders(int id)
         {
             List<Order> orders = orderContainer.GetAllUserOrder(id);
             return Ok(orders);
         }
-
-        /*[HttpPost]
-        public ActionResult AddOrder([FromBody]Order order)
-        {
-
-        }*/
     }
 }

@@ -32,7 +32,6 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
 builder.Services.AddScoped<Interface.IDAL.IProductContainerDAL, DataAccess.DAL.ProductDAL>();
 
 
@@ -41,7 +40,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("MyAllowedOrigins",
         builder =>
         {
-            builder.WithOrigins("http://localhost:8080") // Update with the URL of your Vue.js app
+            builder.WithOrigins("http://localhost:5173") // Update with the URL of your Vue.js app
                 .AllowAnyHeader()
                 .AllowAnyMethod();
         });
@@ -60,7 +59,6 @@ app.UseHttpsRedirection();
 app.UseCors("MyAllowedOrigins");
 
 app.UseAuthorization();
-
 app.MapControllers();
 
 app.Run();

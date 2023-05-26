@@ -15,7 +15,7 @@ namespace S3_Individual_Back_end.Controllers
         ProductContainer productContainer = new ProductContainer(new ProductDAL());
 
         [HttpGet]
-        public ActionResult<List<Product>> GetAllProducts()
+        public async Task<IActionResult> GetAllProducts()
         {
             List<Product> products = productContainer.GetAllProducts();
             return Ok(products);
