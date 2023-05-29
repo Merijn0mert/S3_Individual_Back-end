@@ -21,11 +21,13 @@ namespace S3_Individual_Back_end.Controllers
             return Ok(products);
         }
 
-        [HttpGet("product/{id}")]
-        public IActionResult GetAllProductByID(int id)
+        [HttpGet("{id:int}")]
+        public IActionResult GetProductByID(int id)
         {
 
             Product product = productContainer.GetProductByID(id);
+            if (product == null)
+                return NotFound();
 
             return Ok(product);
         }
