@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
 using BusinessLogic.Classes;
 using BusinessLogic.Containers;
 using DataAccess.DAL;
@@ -33,11 +34,10 @@ namespace S3_Individual_Back_end.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddProducts([FromBody]Product Product)
+        public async Task<IActionResult> AddProducts([FromForm]Product Product)
         {
 
-            Product products = Product;
-            productContainer.CreateProduct(products);
+            productContainer.CreateProduct(Product);
 
             return Ok();
         }
