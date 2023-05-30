@@ -32,8 +32,8 @@ namespace S3_Individual_Back_end.Controllers
             return Ok(product);
         }
 
-        [HttpPost("product/create")]
-        public async Task<IActionResult> AddProduct([FromBody]Product Product)
+        [HttpPost]
+        public async Task<IActionResult> AddProducts([FromBody]Product Product)
         {
 
             Product products = Product;

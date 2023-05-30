@@ -70,7 +70,7 @@ namespace DataAccess.DAL
                                 ProductName = (string)reader["name"],
                                 Price = (decimal)reader["price"],
                                 Description = (string)reader["productdescription"],
-                                ProductImage = (byte[])reader["productimage"],
+                                //ProductImage = (byte[])reader["productimage"],
                             };
 
                             products.Add(product);
