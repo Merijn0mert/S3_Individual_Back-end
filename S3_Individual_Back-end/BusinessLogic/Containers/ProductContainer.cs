@@ -52,5 +52,12 @@ namespace BusinessLogic.Containers
         {
             return (productContainerDAL.DeleteProduct(id));
         }
+
+        public Product GetByID(int id)
+        {
+            Product products = productContainerDAL.GetByID(id).toModel();
+
+            return products;
+        }
     }
 }
