@@ -41,5 +41,12 @@ namespace S3_Individual_Back_end.Controllers
 
             return Ok();
         }
+
+        [HttpPost("/delete")]
+        public async Task<IActionResult> DeleteProduct(int id)
+        {
+            productContainer.DeleteProduct(id);
+            return RedirectToAction("ViewAdminProduct");
+        }
     }
 }

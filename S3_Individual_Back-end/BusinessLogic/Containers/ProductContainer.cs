@@ -43,5 +43,14 @@ namespace BusinessLogic.Containers
         {
             return productContainerDAL.CreateProduct(product.toDTO());
         }
+
+        public bool UpdateProduct(Product product)
+        {
+            return productContainerDAL.UpdateProduct(product.toDTO());
+        }
+        public bool DeleteProduct(int id)
+        {
+            return (productContainerDAL.DeleteProduct(id));
+        }
     }
 }

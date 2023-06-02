@@ -131,5 +131,55 @@ namespace DataAccess.DAL
                     return false;
                 }
         }
+
+        public bool UpdateProduct(ProductDTO prodDTO)
+        {
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+                try
+                {
+                    conn.Open();
+                    string query = "UPDATE product SET name = @productname, price = @price, productdescription = @productdescription WHERE productid = @productid";
+                    SqlCommand command = new SqlCommand(query, conn);
+
+                    command.Parameters.AddWithValue("@productid", prodDTO.ProductID);
+                    command.Parameters.AddWithValue("@productname", prodDTO.ProductName);
+                    command.Parameters.AddWithValue("@price", prodDTO.Price);
+                    command.Parameters.AddWithValue("@productdescription", prodDTO.Description);
+
+
+                    command.ExecuteNonQuery();
+
+                    conn.Close();
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                    return false;
+                }
+        }
+        public bool DeleteProduct(int id)
+        {
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+                try
+                {
+                    conn.Open();
+                    string query = "DELETE FROM product WHERE productid = @productid";
+                    SqlCommand command = new SqlCommand(query, conn);
+
+                    command.Parameters.AddWithValue("@productid", id);
+
+
+                    command.ExecuteNonQuery();
+
+                    conn.Close();
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                    return false;
+                }
+        }
     }
 }

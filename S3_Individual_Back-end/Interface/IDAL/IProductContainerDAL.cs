@@ -11,7 +11,10 @@ namespace Interface.IDAL
     public interface IProductContainerDAL
     {
         bool CreateProduct(ProductDTO productDTO);
+        bool DeleteProduct(int id);
         List<ProductDTO> GetAllProducts();
+        object GetByID(int id);
         ProductDTO GetProductByID(int id);
+        bool UpdateProduct(ProductDTO productDTO);
     }
 }
