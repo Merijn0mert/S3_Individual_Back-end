@@ -23,7 +23,7 @@ namespace BusinessLogic.Containers
             this.prodordDAL = dal;
         }
 
-        public bool AddProductToOrder(List<ProductOrder> prodorder, User user)
+        public bool AddProductToOrder(List<ProductOrder> prodorder)
         {
             int id = 0;
             foreach (ProductOrder prodor in prodorder)
@@ -31,8 +31,6 @@ namespace BusinessLogic.Containers
                 prodordDAL.AddProductToOrder(prodor.toDTO());
                 id = prodor.OrderID;
             }
-            SendConfirmationMail(user.Email , user.Name, id);
-
 
             return true;
             

@@ -28,27 +28,30 @@ namespace S3_Individual_Back_end.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> SubmitOrder(string productIds)
+        public async Task<IActionResult> SubmitOrder([FromBody] List<Product> products)
         {
+            Order order = new Order();
+            order.UserID = 1;
+            Order neworder = ordercontainer.CreateOrder(order);
 
+            List<ProductOrder> orderproductlist = new List<ProductOrder>();
 
-                List<ProductOrder> orderproductlist = new List<ProductOrder>();
-
-                var q = from x in productIds.Split(",")
-                        group x by x into g
-                        let count = g.Count()
-                        orderby count descending
-                        select new { Value = g.Key, Count = count };
-                foreach (var item in q)
-                {
+            /*var q = from x in products.Split(",")
+                    group x by x into g
+                    let count = g.Count()
+                    orderby count descending
+                    select new { Value = g.Key, Count = count };
+            foreach (var item in q)
+            {
                 ProductOrder prodorder = new ProductOrder();
                 var product = productcontainer.GetByID(Convert.ToInt32(item.Value));
                 prodorder.ProductID = Convert.ToInt32(item.Value);
                 prodorder.Quantity = item.Count;
-                prodorder.OrderID = (int)HttpContext.Session.GetInt32("OrderID");
-                prodorder.Price = product.Price;
-                    orderproductlist.Add(prodorder);
-                }
+                prodorder.OrderID = neworder.OrderID;
+                prodorder.Price = products.Price;
+                orderproductlist.Add(prodorder);
+            }*/
+            prodordercontainer.AddProductToOrder(orderproductlist);
             return Ok();
         }
     }

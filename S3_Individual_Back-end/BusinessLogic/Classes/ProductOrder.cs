@@ -20,5 +20,9 @@ namespace BusinessLogic.Classes
             this.Quantity = quantity;
             this.Price = price;
         }
+        public ProductOrder()
+        {
+
+        }
     }
 }

@@ -22,5 +22,10 @@ namespace BusinessLogic.Classes
         {
             OrderID = id;
         }
+
+        public Order()
+        {
+
+        }
     }
 }
