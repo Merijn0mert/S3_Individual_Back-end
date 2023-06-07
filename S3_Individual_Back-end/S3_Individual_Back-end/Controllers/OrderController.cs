@@ -3,6 +3,7 @@ using BusinessLogic.Containers;
 using DataAccess.DAL;
 using Interface.DTO;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
 
 namespace S3_Individual_Back_end.Controllers
 {
@@ -14,11 +15,6 @@ namespace S3_Individual_Back_end.Controllers
         OrderContainer ordercontainer = new OrderContainer(new OrderDAL());
         ProductOrderContainer prodordercontainer = new ProductOrderContainer(new ProductOrderDAL());
         ProductContainer productcontainer = new ProductContainer(new ProductDAL());
-        private readonly IHttpContextAccessor _httpContextAccessor;
-        public OrderController(IHttpContextAccessor httpContextAccessor)
-        {
-            this._httpContextAccessor = httpContextAccessor;
-        }
 
         [HttpGet]
         public ActionResult<List<Product>> GetAllOrders(int id)
@@ -28,15 +24,16 @@ namespace S3_Individual_Back_end.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> SubmitOrder([FromBody] List<Product> products)
+        public async Task<IActionResult> SubmitOrder([FromForm] string products)
         {
+            string cartItems = JsonSerializer.Deserialize<string>(products);
             Order order = new Order();
             order.UserID = 1;
             Order neworder = ordercontainer.CreateOrder(order);
-
+            
             List<ProductOrder> orderproductlist = new List<ProductOrder>();
 
-            /*var q = from x in products.Split(",")
+            var q = from x in cartItems.Split(",")
                     group x by x into g
                     let count = g.Count()
                     orderby count descending
@@ -48,9 +45,9 @@ namespace S3_Individual_Back_end.Controllers
                 prodorder.ProductID = Convert.ToInt32(item.Value);
                 prodorder.Quantity = item.Count;
                 prodorder.OrderID = neworder.OrderID;
-                prodorder.Price = products.Price;
+                prodorder.Price = product.Price;
                 orderproductlist.Add(prodorder);
-            }*/
+            }
             prodordercontainer.AddProductToOrder(orderproductlist);
             return Ok();
         }
