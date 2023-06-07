@@ -5,15 +5,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Data.SqlClient;
+using Npgsql;
+using System.Data;
 using System.Diagnostics;
+using System.Security.Cryptography;
 
 namespace DataAccess.DAL
 {
     // TODO: Refactor naar UserDTO
     public class UserDAL : IUserContainerDAL
     {
-        private string _connectionString = "Server=mssqlstud.fhict.local;Database=dbi432217_kaarsen;User Id=dbi432217_kaarsen;Password=kaarsen;";
+        private string _connectionString = "Host=localhost;Port=5432;Database=S3_kaarsen;Username=postgres;";
 
         public bool CreateUser(UserDTO userdto)
         {
@@ -21,18 +23,18 @@ namespace DataAccess.DAL
 
                 try
                 {
-                    const string sqlQuery = "SELECT COUNT(email) FROM [user] WHERE email = @Email";
+                    const string sqlQuery = "SELECT COUNT(useremail) FROM public.user WHERE useremail = @Email";
 
-                    using (SqlConnection connection = new SqlConnection(_connectionString))
+                    using (NpgsqlConnection connection = new NpgsqlConnection(_connectionString))
                     {
-                        int inUse;
-                        using (SqlCommand command = new SqlCommand(sqlQuery, connection))
+                    long inUse;
+                        using (NpgsqlCommand command = new NpgsqlCommand(sqlQuery, connection))
                         {
                             connection.Open();
 
                             command.Parameters.AddWithValue("@Email", userdto.Email.ToLower().Trim());
 
-                            inUse = (int)command.ExecuteScalar(); // Eerste resultaat, negeer de rest
+                            inUse = (long)command.ExecuteScalar(); // Eerste resultaat, negeer de rest
                         }
 
                         if (inUse >= 1) // Meerdere resultaten
@@ -40,17 +42,24 @@ namespace DataAccess.DAL
                             throw new Exception($"Email already exists! {userdto.Email}");
                         }
                     }                
-                using (SqlConnection conn = new SqlConnection(_connectionString))
+                using (NpgsqlConnection conn = new NpgsqlConnection(_connectionString))
                 {
                     conn.Open();
-                    string query = "INSERT INTO [user](email, name, surname, password, rolid)" +
-                                   "VALUES (@email, @name, @surname, HASHBYTES('SHA2_256', @password), @rolid)";
-                    SqlCommand command = new SqlCommand(query, conn);
 
-                    command.Parameters.AddWithValue("@email", userdto.Email);
-                    command.Parameters.AddWithValue("@name", userdto.Name);
-                    command.Parameters.AddWithValue("@surname", userdto.SurName);
-                    command.Parameters.AddWithValue("@password", userdto.Password);
+                    string password = userdto.Password; // Retrieve the password from the userdto object
+
+                    // Convert the string to a byte array
+                    byte[] passwordBytes = Encoding.UTF8.GetBytes(password);
+
+                    string query = "INSERT INTO public.user(useremail, firstname, lastname, userpassword, rolid)" +
+                                   "VALUES (@useremail, @firstname, @lastname, @userpassword, @rolid)";
+
+                    NpgsqlCommand command = new NpgsqlCommand(query, conn);
+
+                    command.Parameters.AddWithValue("@useremail", userdto.Email);
+                    command.Parameters.AddWithValue("@firstname", userdto.Name);
+                    command.Parameters.AddWithValue("@lastname", userdto.SurName);
+                    command.Parameters.AddWithValue("@userpassword", passwordBytes); // Pass the byte array value
                     command.Parameters.AddWithValue("@rolid", userdto.Rolid);
 
                     command.ExecuteNonQuery();
@@ -71,25 +80,25 @@ namespace DataAccess.DAL
 
             try
             {
-                const string sql = "SELECT * FROM [user]";
+                const string sql = "SELECT * FROM public.user";
 
 
-                using (SqlConnection connection = new SqlConnection(_connectionString))
+                using (NpgsqlConnection connection = new NpgsqlConnection(_connectionString))
                 {
-                    using (SqlCommand command = new SqlCommand(sql, connection))
+                    using (NpgsqlCommand command = new NpgsqlCommand(sql, connection))
                     {
                         connection.Open();
 
-                        SqlDataReader reader = command.ExecuteReader();
+                        NpgsqlDataReader reader = command.ExecuteReader();
 
                         while (reader.Read())
                         {
                             UserDTO user = new UserDTO()
                             {
                                 UserID = (int)reader["userid"],
-                                Email = (string)reader["email"],
-                                SurName = (string)reader["surname"],
-                                Name = (string)reader["name"],
+                                Email = (string)reader["useremail"],
+                                SurName = (string)reader["firstname"],
+                                Name = (string)reader["lastname"],
                                 //Password = "",                                
                                 Rolid = (int)reader["rolid"]
                             };
@@ -99,7 +108,7 @@ namespace DataAccess.DAL
                     }
                 }
             }
-            catch (SqlException ex)
+            catch (NpgsqlException ex)
             {
                 throw new Exception("There was an SQL error during GetAll() users.", ex);
             }
@@ -117,17 +126,17 @@ namespace DataAccess.DAL
 
             try
             {
-                const string sql = "SELECT * FROM [user] WHERE userid = @ID";
+                const string sql = "SELECT * FROM public.user WHERE userid = @ID";
 
-                using (SqlConnection connection = new SqlConnection(_connectionString))
+                using (NpgsqlConnection connection = new NpgsqlConnection(_connectionString))
                 {
-                    using (SqlCommand command = new SqlCommand(sql, connection))
+                    using (NpgsqlCommand command = new NpgsqlCommand(sql, connection))
                     {
                         connection.Open();
 
                         command.Parameters.AddWithValue("@ID", id);
 
-                        SqlDataReader reader = command.ExecuteReader();
+                        NpgsqlDataReader reader = command.ExecuteReader();
 
                         while (reader.Read())
                         {
@@ -146,7 +155,7 @@ namespace DataAccess.DAL
                     return userDTO;
                 }
             }
-            catch (SqlException ex)
+            catch (NpgsqlException ex)
             {
                 throw new Exception("Invalid SQL query. ", ex);
             }
@@ -171,12 +180,12 @@ namespace DataAccess.DAL
                 string _password = password.Trim();
 
                 const string query =
-                    "SELECT * FROM [user] WHERE email = @email AND password=HASHBYTES('SHA2_256', @password)";
+                    "SELECT * FROM public.user WHERE useremail = @email AND userpassword=HASHBYTES('SHA2_256', @password)";
                 //"SELECT * FROM [user] WHERE email = @email AND password = @Password";
 
-                using (SqlConnection connection = new SqlConnection(_connectionString))
+                using (NpgsqlConnection connection = new NpgsqlConnection(_connectionString))
                 {
-                    using (SqlCommand commandDatabase = new SqlCommand(query, connection))
+                    using (NpgsqlCommand commandDatabase = new NpgsqlCommand(query, connection))
                     {
                         commandDatabase.Parameters.AddWithValue("@email", _email);
                         commandDatabase.Parameters.AddWithValue("@password", _password);
@@ -185,7 +194,7 @@ namespace DataAccess.DAL
                         {
                             connection.Open();
 
-                            SqlDataReader reader = commandDatabase.ExecuteReader();
+                            NpgsqlDataReader reader = commandDatabase.ExecuteReader();
 
                             if (reader.HasRows)
                             {
@@ -194,9 +203,9 @@ namespace DataAccess.DAL
                                     userDTO = new UserDTO
                                     {
                                         UserID = (int)reader["userid"],
-                                        Name = (string)reader["name"],
-                                        SurName = (string)reader["surname"],
-                                        Email = (string)reader["email"],
+                                        Email = (string)reader["useremail"],
+                                        SurName = (string)reader["firstname"],
+                                        Name = (string)reader["lastname"],                               
                                         Rolid = (int)reader["rolid"]
                                     };
                                 }
@@ -229,12 +238,12 @@ namespace DataAccess.DAL
         {
             try
             {
-                const string sqlQuery = "SELECT COUNT(email) FROM [user] WHERE email = @Email";
+                const string sqlQuery = "SELECT COUNT(useremail) FROM public.user WHERE useremail = @Email";
 
-                using (SqlConnection connection = new SqlConnection(_connectionString))
+                using (NpgsqlConnection connection = new NpgsqlConnection(_connectionString))
                 {
                     int inUse;
-                    using (SqlCommand command = new SqlCommand(sqlQuery, connection))
+                    using (NpgsqlCommand command = new NpgsqlCommand(sqlQuery, connection))
                     {
                         connection.Open();
 
@@ -249,11 +258,11 @@ namespace DataAccess.DAL
                     }
                 }
 
-                const string sqlInsert = "INSERT INTO [user] (name, surname, email, password, rolid) VALUES (@name, @surname, @email, HASHBYTES('SHA2_256', @password), @rolid)";
+                const string sqlInsert = "INSERT INTO public.user (firstname, lastname, useremail, userpassword, rolid) VALUES (@name, @surname, @email, HASHBYTES('SHA2_256', @password), @rolid)";
                 //"INSERT INTO [user] (name, username, email, password, rolid) VALUES (@name, @username, @email, @password, @rolid)";
-                using (SqlConnection connection = new SqlConnection(_connectionString))
+                using (NpgsqlConnection connection = new NpgsqlConnection(_connectionString))
                 {
-                    using (SqlCommand command = new SqlCommand(sqlInsert, connection))
+                    using (NpgsqlCommand command = new NpgsqlCommand(sqlInsert, connection))
                     {
                         command.Parameters.AddWithValue("@name", userDto.Name);
                         command.Parameters.AddWithValue("@surname", userDto.SurName);
@@ -268,7 +277,7 @@ namespace DataAccess.DAL
                             command.ExecuteNonQuery();
                         }
 
-                        catch (SqlException ex)
+                        catch (NpgsqlException ex)
                         {
                             throw new Exception("Error inserting SQL into database.", ex);
                         }
@@ -280,7 +289,7 @@ namespace DataAccess.DAL
                 }
             }
 
-            catch (SqlException ex)
+            catch (NpgsqlException ex)
             {
                 throw new Exception("SQL Error querying info from database.", ex);
             }
@@ -297,11 +306,11 @@ namespace DataAccess.DAL
             try
             {
                 // Make a sql query to retrieve all users where email is the same as what is filled in
-                const string sql = "UPDATE [user] SET password = HASHBYTES('SHA2_256', @Password) WHERE email = @Email";
+                const string sql = "UPDATE public.user SET userpassword = HASHBYTES('SHA2_256', @Password) WHERE useremail = @Email";
 
-                using (SqlConnection connection = new SqlConnection(_connectionString))
+                using (NpgsqlConnection connection = new NpgsqlConnection(_connectionString))
                 {
-                    using (SqlCommand command = new SqlCommand(sql, connection))
+                    using (NpgsqlCommand command = new NpgsqlCommand(sql, connection))
                     {
                         connection.Open();
 
@@ -330,11 +339,11 @@ namespace DataAccess.DAL
         {
             try
             {
-                const string sql = "UPDATE [user] SET password = HASHBYTES('SHA2_256', @Password) WHERE userid = @UserID";
+                const string sql = "UPDATE public.user SET userpassword = HASHBYTES('SHA2_256', @Password) WHERE userid = @UserID";
 
-                using (SqlConnection connection = new SqlConnection(_connectionString))
+                using (NpgsqlConnection connection = new NpgsqlConnection(_connectionString))
                 {
-                    using (SqlCommand command = new SqlCommand(sql, connection))
+                    using (NpgsqlCommand command = new NpgsqlCommand(sql, connection))
                     {
                         connection.Open();
 

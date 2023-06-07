@@ -12,8 +12,8 @@ namespace BusinessLogic.Classes
             public string Email { get; set; }        
             public string Name { get; set; }
             public string SurName { get; set; }
-            public string Password { get; }         
-            public int Rolid { get; }
+            public string Password { get; set; }         
+            public int Rolid { get; set; }
 
             public User(int userId, string email, string name, string surname, string password, int rolid)
             {

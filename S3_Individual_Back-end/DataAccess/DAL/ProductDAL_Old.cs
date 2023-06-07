@@ -1,19 +1,17 @@
-﻿using System;
-using System.Collections;
+﻿using Interface.DTO;
+using Interface.IDAL;
+using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Interface.DTO;
-using Interface.IDAL;
-using Npgsql;
+using System.Data.SqlClient;
 
 namespace DataAccess.DAL
 {
-    public class ProductDAL : IProductContainerDAL
+    public class ProductDAL_Old : IProductContainerDAL
     {
-        private string _connectionString = "Host=localhost;Port=5432;Database=S3_kaarsen;Username=postgres;";
+        private string _connectionString = "Server=mssqlstud.fhict.local;Database=dbi432217_kaarsen;User Id=dbi432217_kaarsen;Password=kaarsen;";
 
         public List<ProductDTO> GetAllProducts()
         {
@@ -21,24 +19,24 @@ namespace DataAccess.DAL
 
             try
             {
-                const string query = "SELECT * FROM public.product";
+                const string sql = "SELECT * FROM [product]";
 
 
-                using (NpgsqlConnection connection = new NpgsqlConnection(_connectionString))
+                using (SqlConnection connection = new SqlConnection(_connectionString))
                 {
-                    using (NpgsqlCommand command = new NpgsqlCommand(query, connection))
+                    using (SqlCommand command = new SqlCommand(sql, connection))
                     {
                         connection.Open();
 
-                        NpgsqlDataReader reader = command.ExecuteReader();
+                        SqlDataReader reader = command.ExecuteReader();
 
                         while (reader.Read())
                         {
                             ProductDTO product = new ProductDTO()
                             {
                                 ProductID = (int)reader["productid"],
-                                ProductName = (string)reader["productname"],
-                                Price = (decimal)reader["productprice"],
+                                ProductName = (string)reader["name"],
+                                Price = (decimal)reader["price"],
                                 Description = (string)reader["productdescription"],
                                 ProductImage = (byte[])reader["productimage"]
                             };
@@ -48,7 +46,7 @@ namespace DataAccess.DAL
                     }
                 }
             }
-            catch (NpgsqlException ex)
+            catch (SqlException ex)
             {
                 throw new Exception("There was an SQL error during GetAll() product.", ex);
             }
@@ -66,26 +64,25 @@ namespace DataAccess.DAL
 
             try
             {
-                const string query = "SELECT * FROM public.product WHERE productid = @ID";
+                const string sql = "SELECT * FROM [product] WHERE productid = @ID";
 
-                using (NpgsqlConnection connection = new NpgsqlConnection(_connectionString))
+                using (SqlConnection connection = new SqlConnection(_connectionString))
                 {
-                    using (NpgsqlCommand command = new NpgsqlCommand(query, connection))
+                    using (SqlCommand command = new SqlCommand(sql, connection))
                     {
                         connection.Open();
 
                         command.Parameters.AddWithValue("@ID", id);
 
-                        NpgsqlDataReader reader = command.ExecuteReader();
-                        
+                        SqlDataReader reader = command.ExecuteReader();
 
                         while (reader.Read())
                         {
                             productDTO = new ProductDTO()
                             {
                                 ProductID = (int)reader["productid"],
-                                ProductName = (string)reader["productname"],
-                                Price = (decimal)reader["productprice"],
+                                ProductName = (string)reader["name"],
+                                Price = (decimal)reader["price"],
                                 Description = (string)reader["productdescription"],
                                 ProductImage = (byte[])reader["productimage"]
                             };
@@ -95,7 +92,7 @@ namespace DataAccess.DAL
                     return productDTO;
                 }
             }
-            catch (NpgsqlException ex)
+            catch (SqlException ex)
             {
                 throw new Exception("Invalid SQL query. ", ex);
             }
@@ -110,22 +107,22 @@ namespace DataAccess.DAL
         }
         public bool CreateProduct(ProductDTO prodDTO)
         {
-            using (NpgsqlConnection connection = new NpgsqlConnection(_connectionString))
+            using (SqlConnection conn = new SqlConnection(_connectionString))
                 try
                 {
-                    connection.Open();
-                    string query = "INSERT INTO public.product(productname, productprice, productdescription, productimage)" +
-                                   "VALUES (@productname, @productprice, @productdescription, @productimage)";
-                    NpgsqlCommand command = new NpgsqlCommand(query, connection);
+                    conn.Open();
+                    string query = "INSERT INTO product(name, price, productdescription, productimage)" +
+                                   "VALUES (@productname, @price, @productdescription, @productimage)";
+                    SqlCommand command = new SqlCommand(query, conn);
 
                     command.Parameters.AddWithValue("@productname", prodDTO.ProductName);
-                    command.Parameters.AddWithValue("@productprice", prodDTO.Price);
+                    command.Parameters.AddWithValue("@price", prodDTO.Price);
                     command.Parameters.AddWithValue("@productdescription", (prodDTO.Description == null ? "" : prodDTO.Description));
                     command.Parameters.AddWithValue("@productimage", prodDTO.ProductImage);
 
                     command.ExecuteNonQuery();
 
-                    connection.Close();
+                    conn.Close();
                     return true;
                 }
                 catch (Exception ex)
@@ -137,22 +134,22 @@ namespace DataAccess.DAL
 
         public bool UpdateProduct(ProductDTO prodDTO)
         {
-            using (NpgsqlConnection connection = new NpgsqlConnection(_connectionString))
+            using (SqlConnection conn = new SqlConnection(_connectionString))
                 try
                 {
-                    connection.Open();
-                    string sql = "UPDATE public.product SET productname = @productname, productprice = @productprice, productdescription = @productdescription WHERE productid = @productid";
-                    NpgsqlCommand command = new NpgsqlCommand(sql, connection);
+                    conn.Open();
+                    string query = "UPDATE product SET name = @productname, price = @price, productdescription = @productdescription WHERE productid = @productid";
+                    SqlCommand command = new SqlCommand(query, conn);
 
                     command.Parameters.AddWithValue("@productid", prodDTO.ProductID);
                     command.Parameters.AddWithValue("@productname", prodDTO.ProductName);
-                    command.Parameters.AddWithValue("@productprice", prodDTO.Price);
+                    command.Parameters.AddWithValue("@price", prodDTO.Price);
                     command.Parameters.AddWithValue("@productdescription", prodDTO.Description);
 
 
                     command.ExecuteNonQuery();
 
-                    connection.Close();
+                    conn.Close();
                     return true;
                 }
                 catch (Exception ex)
@@ -163,19 +160,19 @@ namespace DataAccess.DAL
         }
         public bool DeleteProduct(int id)
         {
-            using (NpgsqlConnection connection = new NpgsqlConnection(_connectionString))
+            using (SqlConnection conn = new SqlConnection(_connectionString))
                 try
                 {
-                    connection.Open();
-                    string query = "DELETE FROM public.product WHERE productid = @productid";
-                    NpgsqlCommand command = new NpgsqlCommand(query, connection);
+                    conn.Open();
+                    string query = "DELETE FROM product WHERE productid = @productid";
+                    SqlCommand command = new SqlCommand(query, conn);
 
                     command.Parameters.AddWithValue("@productid", id);
 
 
                     command.ExecuteNonQuery();
 
-                    connection.Close();
+                    conn.Close();
                     return true;
                 }
                 catch (Exception ex)
@@ -190,25 +187,25 @@ namespace DataAccess.DAL
 
             try
             {
-                const string query = "SELECT * FROM public.product WHERE productid = @ID";
+                const string sql = "SELECT * FROM [product] WHERE productid = @ID";
 
-                using (NpgsqlConnection connection = new NpgsqlConnection(_connectionString))
+                using (SqlConnection connection = new SqlConnection(_connectionString))
                 {
-                    using (NpgsqlCommand command = new NpgsqlCommand(query, connection))
+                    using (SqlCommand command = new SqlCommand(sql, connection))
                     {
                         connection.Open();
 
                         command.Parameters.AddWithValue("@ID", id);
 
-                        NpgsqlDataReader reader = command.ExecuteReader();
+                        SqlDataReader reader = command.ExecuteReader();
 
                         while (reader.Read())
                         {
                             productDTO = new ProductDTO()
                             {
                                 ProductID = (int)reader["productid"],
-                                ProductName = (string)reader["productname"],
-                                Price = (decimal)reader["productprice"],
+                                ProductName = (string)reader["name"],
+                                Price = (decimal)reader["price"],
                                 Description = (string)reader["productdescription"],
                                 ProductImage = (byte[])reader["productimage"]
                             };
@@ -218,7 +215,7 @@ namespace DataAccess.DAL
                     return productDTO;
                 }
             }
-            catch (NpgsqlException ex)
+            catch (SqlException ex)
             {
                 throw new Exception("Invalid SQL query. ", ex);
             }

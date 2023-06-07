@@ -12,7 +12,7 @@ namespace S3_Individual_Back_end.Controllers
     public class AuthController : ControllerBase
     {
         UserContainer container = new UserContainer(new UserDAL());
-
+        
         [HttpPost]
         public async Task<IActionResult> SubmitLogin([FromForm] Login login) 
         {
@@ -41,6 +41,18 @@ namespace S3_Individual_Back_end.Controllers
                 }
             }
             return Ok();
+        }
+
+        [HttpPost("/auth/signup")]
+        public async Task<IActionResult> SubmitRegister([FromForm] User user) 
+        {
+            if (ModelState.IsValid)
+            {
+                container.CreateUser(user);
+
+                return Ok(user);
+            }
+            return Ok(user);
         }
     }
 }
