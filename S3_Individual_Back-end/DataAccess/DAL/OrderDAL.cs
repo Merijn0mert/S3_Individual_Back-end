@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Npgsql;
 using System.Data.SqlClient;
 
 namespace DataAccess.DAL
@@ -15,14 +16,14 @@ namespace DataAccess.DAL
 
         public OrderDTO CreateOrder(OrderDTO orderdto)
         {
-            using (SqlConnection conn = new SqlConnection(_connectionString))
+            using (NpgsqlConnection conn = new NpgsqlConnection(_connectionString))
                 try
                 {
                     conn.Open();
                     string query = "INSERT INTO [order](userid, orderdate)" +
                                    "VALUES (@userid,getdate());" +
                                    "SELECT SCOPE_IDENTITY();";
-                    SqlCommand command = new SqlCommand(query, conn);
+                    NpgsqlCommand command = new NpgsqlCommand(query, conn);
                     
                     command.Parameters.AddWithValue("@userid", orderdto.UserID);
 
@@ -41,12 +42,12 @@ namespace DataAccess.DAL
         }
         public bool DeleteOrder(int id)
         {
-            using (SqlConnection conn = new SqlConnection(_connectionString))
+            using (NpgsqlConnection conn = new NpgsqlConnection(_connectionString))
                 try
                 {
                     conn.Open();
                     string query = "DELETE FROM [order] WHERE orderid = @orderid";
-                    SqlCommand command = new SqlCommand(query, conn);
+                    NpgsqlCommand command = new NpgsqlCommand(query, conn);
 
                     command.Parameters.AddWithValue("@orderid", id);
 
@@ -72,13 +73,13 @@ namespace DataAccess.DAL
                 const string sql = "SELECT * FROM [order]";
 
 
-                using (SqlConnection connection = new SqlConnection(_connectionString))
+                using (NpgsqlConnection connection = new NpgsqlConnection(_connectionString))
                 {
-                    using (SqlCommand command = new SqlCommand(sql, connection))
+                    using (NpgsqlCommand command = new NpgsqlCommand(sql, connection))
                     {
                         connection.Open();
 
-                        SqlDataReader reader = command.ExecuteReader();
+                        NpgsqlDataReader reader = command.ExecuteReader();
 
                         while (reader.Read())
                         {
@@ -94,7 +95,7 @@ namespace DataAccess.DAL
                     }
                 }
             }
-            catch (SqlException ex)
+            catch (NpgsqlException ex)
             {
                 throw new Exception("There was an SQL error during GetAll() product.", ex);
             }
@@ -114,15 +115,15 @@ namespace DataAccess.DAL
             {
                 const string sql = "SELECT * FROM [order] WHERE orderid = @ID";
 
-                using (SqlConnection connection = new SqlConnection(_connectionString))
+                using (NpgsqlConnection connection = new NpgsqlConnection(_connectionString))
                 {
-                    using (SqlCommand command = new SqlCommand(sql, connection))
+                    using (NpgsqlCommand command = new NpgsqlCommand(sql, connection))
                     {
                         connection.Open();
 
                         command.Parameters.AddWithValue("@ID", orderdto.OrderID);
 
-                        SqlDataReader reader = command.ExecuteReader();
+                        NpgsqlDataReader reader = command.ExecuteReader();
 
                         while (reader.Read())
                         {
@@ -138,7 +139,7 @@ namespace DataAccess.DAL
                     return orderDTO;
                 }
             }
-            catch (SqlException ex)
+            catch (NpgsqlException ex)
             {
                 throw new Exception("Invalid SQL query. ", ex);
             }
@@ -160,14 +161,14 @@ namespace DataAccess.DAL
                 const string sql = "SELECT * FROM [order] WHERE userid = @ID";
 
 
-                using (SqlConnection connection = new SqlConnection(_connectionString))
+                using (NpgsqlConnection connection = new NpgsqlConnection(_connectionString))
                 {
-                    using (SqlCommand command = new SqlCommand(sql, connection))
+                    using (NpgsqlCommand command = new NpgsqlCommand(sql, connection))
                     {
                         connection.Open();
                         command.Parameters.AddWithValue("@ID", id);
 
-                        SqlDataReader reader = command.ExecuteReader();
+                        NpgsqlDataReader reader = command.ExecuteReader();
 
                         while (reader.Read())
                         {
@@ -183,7 +184,7 @@ namespace DataAccess.DAL
                     }
                 }
             }
-            catch (SqlException ex)
+            catch (NpgsqlException ex)
             {
                 throw new Exception("There was an SQL error during GetAll() product.", ex);
             }
