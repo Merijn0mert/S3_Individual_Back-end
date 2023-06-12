@@ -25,4 +25,4 @@ jobs:
     - name: Build
       run: dotnet build S3_Individual_Back-end/S3_Individual_Back-end.sln --no-restore
     - name: Test
-      run: dotnet test --no-build --verbosity normal
+      run: dotnet test S3_Individual_Back-end/S3_Individual_Back-end.sln --no-build --verbosity normal
