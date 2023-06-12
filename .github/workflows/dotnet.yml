@@ -23,6 +23,6 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore S3_Individual_Back-end/S3_Individual_Back-end/S3_Individual_Back-end.csproj
     - name: Build
-      run: dotnet build --no-restore
+      run: dotnet build S3_Individual_Back-end/S3_Individual_Back-end/S3_Individual_Back-end.csproj
     - name: Test
       run: dotnet test --no-build --verbosity normal
