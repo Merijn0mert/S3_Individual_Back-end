@@ -43,7 +43,7 @@ namespace S3_Individual_Back_end.Controllers
             return Ok();
         }
 
-        [HttpPost("/auth/signup")]
+        [HttpPost("signup")]
         public async Task<IActionResult> SubmitRegister([FromForm] User user) 
         {
             if (ModelState.IsValid)

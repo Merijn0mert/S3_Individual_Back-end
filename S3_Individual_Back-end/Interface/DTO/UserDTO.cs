@@ -6,8 +6,6 @@ using System.Threading.Tasks;
 
 namespace Interface.DTO
 {
-    // Een record heeft geen individueel object en constructors nodig.
-    // Bij aanmaken hoeven de waardes niet meer veranderd te worden, goed voor een SQL verwerking.
     public class UserDTO
     {
         public int UserID { get; set; }

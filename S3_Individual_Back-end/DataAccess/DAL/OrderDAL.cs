@@ -20,7 +20,7 @@ namespace DataAccess.DAL
                 try
                 {
                     conn.Open();
-                    string query = "INSERT INTO [order](userid, orderdate)" +
+                    string query = "INSERT INTO public.order(userid, orderdate)" +
                                    "VALUES (@userid,getdate());" +
                                    "SELECT SCOPE_IDENTITY();";
                     NpgsqlCommand command = new NpgsqlCommand(query, conn);
@@ -46,7 +46,7 @@ namespace DataAccess.DAL
                 try
                 {
                     conn.Open();
-                    string query = "DELETE FROM [order] WHERE orderid = @orderid";
+                    string query = "DELETE FROM public.order WHERE orderid = @orderid";
                     NpgsqlCommand command = new NpgsqlCommand(query, conn);
 
                     command.Parameters.AddWithValue("@orderid", id);
@@ -70,7 +70,7 @@ namespace DataAccess.DAL
 
             try
             {
-                const string sql = "SELECT * FROM [order]";
+                const string sql = "SELECT * FROM public.order";
 
 
                 using (NpgsqlConnection connection = new NpgsqlConnection(_connectionString))
@@ -113,7 +113,7 @@ namespace DataAccess.DAL
 
             try
             {
-                const string sql = "SELECT * FROM [order] WHERE orderid = @ID";
+                const string sql = "SELECT * FROM public.order WHERE orderid = @ID";
 
                 using (NpgsqlConnection connection = new NpgsqlConnection(_connectionString))
                 {
@@ -158,7 +158,7 @@ namespace DataAccess.DAL
 
             try
             {
-                const string sql = "SELECT * FROM [order] WHERE userid = @ID";
+                const string sql = "SELECT * FROM public.order WHERE userid = @ID";
 
 
                 using (NpgsqlConnection connection = new NpgsqlConnection(_connectionString))
