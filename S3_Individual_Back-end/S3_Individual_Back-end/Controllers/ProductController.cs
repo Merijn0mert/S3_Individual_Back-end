@@ -13,7 +13,12 @@ namespace S3_Individual_Back_end.Controllers
     [Route("api/products")]
     public class ProductController : ControllerBase
     {
-        ProductContainer productContainer = new ProductContainer(new ProductDAL());
+        private readonly ProductContainer productContainer;
+
+        public ProductController(ProductContainer productContainer)
+        {
+            this.productContainer = productContainer;
+        }
 
         [HttpGet]
         public async Task<IActionResult> GetAllProducts()
