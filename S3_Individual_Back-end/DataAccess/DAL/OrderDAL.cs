@@ -12,7 +12,7 @@ namespace DataAccess.DAL
 {
     public class OrderDAL : IOrderContainerDAL
     {
-        private string _connectionString = "Server=mssqlstud.fhict.local;Database=dbi432217_kaarsen;User Id=dbi432217_kaarsen;Password=kaarsen;";
+        private string _connectionString = "Host=localhost;Port=5432;Database=S3_kaarsen;Username=postgres;";
 
         public OrderDTO CreateOrder(OrderDTO orderdto)
         {
@@ -21,8 +21,8 @@ namespace DataAccess.DAL
                 {
                     conn.Open();
                     string query = "INSERT INTO public.order(userid, orderdate)" +
-                                   "VALUES (@userid,getdate());" +
-                                   "SELECT SCOPE_IDENTITY();";
+                                   "VALUES (@userid, CURRENT_DATE);" +
+                                   "SELECT LASTVAL();";
                     NpgsqlCommand command = new NpgsqlCommand(query, conn);
                     
                     command.Parameters.AddWithValue("@userid", orderdto.UserID);

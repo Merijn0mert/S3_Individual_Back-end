@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Data.SqlClient;
+using Npgsql;
 
 namespace DataAccess.DAL
 {
@@ -15,14 +16,14 @@ namespace DataAccess.DAL
 
         public ReviewDTO CreateReview(ReviewDTO dto)
         {
-            using (SqlConnection conn = new SqlConnection(_connectionString))
+            using (NpgsqlConnection conn = new NpgsqlConnection(_connectionString))
                 try
                 {
                     conn.Open();
                     string query = "INSERT INTO [productreview](productid, userid, reviewscore, reviewtext, reviewdate)" +
                                    "VALUES (@productid, @userid, @reviewscore, @reviewtext, getdate());" +
                                    "SELECT SCOPE_IDENTITY();";
-                    SqlCommand command = new SqlCommand(query, conn);
+                    NpgsqlCommand command = new NpgsqlCommand(query, conn);
 
                     command.Parameters.AddWithValue("@productid", dto.ProductID);
                     command.Parameters.AddWithValue("@userid", dto.UserID);
@@ -52,14 +53,14 @@ namespace DataAccess.DAL
                 const string sql = "SELECT * FROM [productreview] WHERE productid = @ID";
 
 
-                using (SqlConnection connection = new SqlConnection(_connectionString))
+                using (NpgsqlConnection connection = new NpgsqlConnection(_connectionString))
                 {
-                    using (SqlCommand command = new SqlCommand(sql, connection))
+                    using (NpgsqlCommand command = new NpgsqlCommand(sql, connection))
                     {
                         connection.Open();
                         command.Parameters.AddWithValue("@ID", id);
 
-                        SqlDataReader reader = command.ExecuteReader();
+                        NpgsqlDataReader reader = command.ExecuteReader();
 
                         while (reader.Read())
                         {
@@ -78,7 +79,7 @@ namespace DataAccess.DAL
                     }
                 }
             }
-            catch (SqlException ex)
+            catch (NpgsqlException ex)
             {
                 throw new Exception("There was an SQL error during GetAll() product.", ex);
             }

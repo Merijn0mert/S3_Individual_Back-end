@@ -16,7 +16,7 @@ namespace S3_Individual_Back_end.Controllers
         [HttpPost]
         public async Task<IActionResult> login([FromBody] JsonElement data) 
         {
-            var login = JsonSerializer.Deserialize<string>(data);
+            
             var login2 = login;
             User user = new User();
             //string user = JsonSerializer.Deserialize<string>(login);
