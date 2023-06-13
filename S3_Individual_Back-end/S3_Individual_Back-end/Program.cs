@@ -40,7 +40,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("MyAllowedOrigins",
         builder =>
         {
-            builder.WithOrigins("http://localhost:5173") // Update with the URL of your Vue.js app
+            builder.WithOrigins("http://localhost:5173", "http://localhost:5174") // Update with the URL of your Vue.js app
                 .AllowAnyHeader()
                 .AllowAnyMethod()
                 .AllowAnyOrigin();
