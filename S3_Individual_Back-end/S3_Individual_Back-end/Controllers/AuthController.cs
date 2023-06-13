@@ -14,31 +14,15 @@ namespace S3_Individual_Back_end.Controllers
         UserContainer container = new UserContainer(new UserDAL());
         
         [HttpPost]
-        public async Task<IActionResult> SubmitLogin([FromForm] Login login) 
+        public async Task<IActionResult> login([FromBody] JsonElement data) 
         {
+            var login = JsonSerializer.Deserialize<string>(data);
+            var login2 = login;
+            User user = new User();
             //string user = JsonSerializer.Deserialize<string>(login);
             if (ModelState.IsValid) // modelstate is true with null
             {
-                try
-                {
-                    User validatedUser = container.AttemptLogin(login.Email, login.Password);
 
-                    if (validatedUser.Email != null)
-                    {
-                        HttpContext.Session.SetInt32("UserID", validatedUser.UserID);
-                        HttpContext.Session.SetString("UserName", validatedUser.Name);
-                        HttpContext.Session.SetString("UserEmail", validatedUser.Email);
-                        HttpContext.Session.SetInt32("RolID", validatedUser.Rolid);
-
-                        return RedirectToAction("Index", "Home");
-                    }
-                    return Ok(login);
-                }
-
-                catch (Exception ex)
-                {                   
-                    return Ok(ex);
-                }
             }
             return Ok();
         }
