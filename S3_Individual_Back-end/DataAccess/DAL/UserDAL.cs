@@ -179,8 +179,10 @@ namespace DataAccess.DAL
                 //string _password = userDto.Password.Trim();
                 string _password = password.Trim();
 
+                byte[] passwordBytes = Encoding.UTF8.GetBytes(_password);
+
                 const string query =
-                    "SELECT * FROM public.user WHERE useremail = @email AND userpassword=HASHBYTES('SHA2_256', @password)";
+                    "SELECT * FROM public.user WHERE useremail = @email AND userpassword = @password";
                 //"SELECT * FROM [user] WHERE email = @email AND password = @Password";
 
                 using (NpgsqlConnection connection = new NpgsqlConnection(_connectionString))
@@ -188,7 +190,7 @@ namespace DataAccess.DAL
                     using (NpgsqlCommand commandDatabase = new NpgsqlCommand(query, connection))
                     {
                         commandDatabase.Parameters.AddWithValue("@email", _email);
-                        commandDatabase.Parameters.AddWithValue("@password", _password);
+                        commandDatabase.Parameters.AddWithValue("@password", passwordBytes);
 
                         try
                         {
@@ -204,8 +206,8 @@ namespace DataAccess.DAL
                                     {
                                         UserID = (int)reader["userid"],
                                         Email = (string)reader["useremail"],
-                                        SurName = (string)reader["firstname"],
-                                        Name = (string)reader["lastname"],                               
+                                        Name = (string)reader["firstname"],
+                                        SurName = (string)reader["lastname"],                               
                                         Rolid = (int)reader["rolid"]
                                     };
                                 }
