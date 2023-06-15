@@ -26,13 +26,8 @@ namespace S3_Individual_Back_end.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Login([FromBody] JsonElement data) 
+        public async Task<IActionResult> Login([FromBody] Login _user) 
         {
-            Login _user = new Login
-            {
-                Email = data.GetProperty("email").GetString(),
-                Password = data.GetProperty("password").GetString()
-            };
 
                 try
                 {
